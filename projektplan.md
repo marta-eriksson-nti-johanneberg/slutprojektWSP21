@@ -21,6 +21,7 @@ Admins profil
 
 Skapa katt-annons sidan (endast admin)
 ![admin_create_advert](admin_create_advert.jpg)
+hej
 
 ## 3. Databas med ER-diagram (Bild på ER-diagram).
 ![diagram](er_diagram.png)
