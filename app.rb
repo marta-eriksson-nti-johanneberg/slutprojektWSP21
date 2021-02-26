@@ -9,8 +9,7 @@ get('/') do
   id = session[:id].to_i
   db = SQLite3::Database.new('db/db.db')
   db.results_as_hash = true
-  result = db.execute("SELECT * FROM todos WHERE user_id = ?",id)
-  p "Alla todos från result #{result}"
+  result = db.execute("SELECT * FROM users WHERE user_id = ?",id) 
   slim(:"todos/index",locals:{todos:result})
 end
 
