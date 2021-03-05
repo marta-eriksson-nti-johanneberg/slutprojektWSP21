@@ -2,6 +2,8 @@ require 'sinatra'
 require 'slim'
 require 'sqlite3'
 require 'bcrypt'
+require_relative 'model.rb'
+require 'byebug'
 
 enable :sessions
 
@@ -9,8 +11,8 @@ get('/') do
   id = session[:id].to_i
   db = SQLite3::Database.new('db/db.db')
   db.results_as_hash = true
-  result = db.execute("SELECT * FROM users WHERE user_id = ?",id) 
-  slim(:"todos/index",locals:{todos:result})
+  result = db.execute("SELECT * FROM cats") # WHERE user_id = ?",id
+  slim(:"index",locals:{cats:result})
 end
 
 get('/showlogin') do
@@ -18,7 +20,7 @@ get('/showlogin') do
 end
 
 
-post('/users/new') do
+begin post('/users/new') do
   username = params[:username]
   password = params[:password]
   password_confirm = params[:password_confirm]
@@ -45,7 +47,7 @@ post('/login') do
   id = result["id"]
   if BCrypt::Password.new(pwdigest) == password
     session[:id] = id 
-    redirect('/todos')
+    redirect('/')
   else 
     "FEL LÖSEN!"
   end
@@ -61,7 +63,7 @@ post('/todos/delete') do
   userid = session[:id].to_i
   db = SQLite3::Database.new('db/db.db')
   db.execute("DELETE FROM todos WHERE id = ?", id)
-  redirect('/todos')
+  redirect('/')
 end
 
 post('/todos/new') do
@@ -81,5 +83,6 @@ post('/todos/edit') do
   db.results_as_hash = true
   db.execute("UPDATE todos SET content = ? WHERE id = ?",content,id)
   redirect('/todos')
+end 
 end
 

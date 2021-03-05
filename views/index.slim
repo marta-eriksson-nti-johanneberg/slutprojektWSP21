@@ -1,0 +1,20 @@
+div
+    här kan man filtrera på saker
+
+
+div
+    Här kommer katterna finnas
+    ol
+    - cats.each do |cat| 
+        li 
+            p = cat["name"]
+            / form action="todos/delete" method="POST" 
+            /     input type="hidden" name="number" value="#{todo["id"]}"
+            /     input type="submit" value="Delete"
+            / form action="todos/edit" method="POST"
+            /     input type="hidden" name="number" value="#{todo["id"]}"
+            /     input type="text" name="content" placeholder="Skriv uppdaterad todo"
+            /     input type="submit" value="Ändra" 
+            
+end
+
