@@ -11,10 +11,13 @@ get('/') do
   id = session[:id].to_i
   db = SQLite3::Database.new('db/db.db')
   db.results_as_hash = true
-  @result = db.execute("SELECT * FROM cats") # WHERE user_id = ?",id
+  @result = db.execute("SELECT * FROM cats") 
   @result2 = db.execute("SELECT * FROM user_cat_relationship WHERE user_id = ?", id)
-  p @result2 
   slim(:"index")
+end
+
+get('/notlogin') do
+  slim(:"notlogin")
 end
 
 get('/showlogin') do
@@ -58,12 +61,21 @@ begin post('/users/new') do
 
 end
 
+get('/liked') do
+  user_id = session[:id]
+  db = SQLite3::Database.new('db/db.db')
+  db.results_as_hash = true
+  @result = db.execute("SELECT * FROM cats")
+  @result2 = db.execute("SELECT * FROM user_cat_relationship WHERE user_id = ?", user_id)
+  slim(:liked)
+end
+
 post('/liked/new') do
   user_id = session[:id]
   cat_id = params[:cat_id]
   db = SQLite3::Database.new('db/db.db')
   db.execute("INSERT INTO user_cat_relationship (user_id, cat_id) VALUES (?,?)", user_id, cat_id)
-  redirect('/')
+  redirect back
 end
 
 post('/liked/delete') do
@@ -71,7 +83,20 @@ post('/liked/delete') do
   cat_id = params[:cat_id]
   db = SQLite3::Database.new('db/db.db')
   db.execute("DELETE FROM user_cat_relationship WHERE cat_id = ? AND user_id = ?", cat_id, user_id)
-  redirect('/')
+  redirect back
+end
+
+get('/profile') do
+  user_id = session[:id]
+  db = SQLite3::Database.new('db/db.db')
+  db.results_as_hash = true
+  @result = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).first
+  slim(:profile)
+end
+
+get('/profile/edit') do
+  user_id = session[:id]
+  slim(:editprofile)
 end
 
 post('/todos/delete') do

@@ -20,7 +20,10 @@ div
                         input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
                         button type="submit"
                             img src="img/unliked.png" alt="unliked_icon" height = 100 width = 100
-            
+            - else 
+                button href="/notlogin"
+                    img src="img/unliked.png"                
+
             / form action="todos/delete" method="POST" 
             /     input type="hidden" name="number" value="#{todo["id"]}"
             /     input type="submit" value="Delete"
