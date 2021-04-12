@@ -12,7 +12,7 @@ html lang="en"
       - if session[:id] == nil
         a href="/showlogin" Login
       - elsif session[:id] == 0
-        a href="/admin"
+        a href="/profile/admin"
           img src="img/profile_picture.png" 
       - else
         a href="/profile"

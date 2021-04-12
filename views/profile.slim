@@ -2,12 +2,15 @@ div
     img src="img/profile_header.png" alt="profile header"
     img src="img/profile_picture.png" alt="profile picture"
 
+div 
     h1 Uppgifter 
     h5 Namn 
     p #{@result["name"]}
     h5 Mailadress 
-    p #{@result["mail"]}
+    p #{@result["email"]}
     h5 Telefonnummer 
     p #{@result["phone"]}
 
-
+div 
+    form action="profile/users/logout" method="POST"
+        input type="submit" value="Logga ut"

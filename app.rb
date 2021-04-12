@@ -99,6 +99,28 @@ get('/profile/edit') do
   slim(:editprofile)
 end
 
+get('/profile/admin') do
+  user_id = session[:id]
+  db = SQLite3::Database.new('db/db.db')
+  db.results_as_hash = true
+  @result = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).first
+  @result2 = db.execute("SELECT * FROM cats")
+  slim(:admin)
+end
+
+post('/profile/users/logout') do
+  session[:id] = nil 
+  redirect('/')
+end
+
+post('/cats/delete') do
+  cat_id = params[:cat_id]
+  db = SQLite3::Database.new('db/db.db')
+  db.execute("DELETE FROM cats WHERE cat_id = ?", cat_id)
+  redirect back
+end
+
+
 post('/todos/delete') do
   id = params[:number]
   userid = session[:id].to_i
