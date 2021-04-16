@@ -15,7 +15,8 @@ div
     h1 Nuvarande annonser 
     - @result2.each do |cat| 
             div 
-                img src="img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
+                a href="cats/#{cat["cat_id"]}/profile"   
+                    img src="img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
                 p = cat["name"]
                 p = cat["age"]
                 form action="cats/delete" method="POST"

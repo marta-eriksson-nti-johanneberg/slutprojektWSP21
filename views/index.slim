@@ -9,7 +9,12 @@ div
             img src="img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
             p = cat["name"]
             p = cat["age"]
-            - if session[:id] != nil
+            - if session[:id] == 0 
+                form action="cats/delete" method="POST"
+                    input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
+                    button type="submit"
+                        img src="img/delete.png" alt="delete_icon" height = 100 width = 100
+            - elsif session[:id] != nil
                 - if @result2.map { |x| x["cat_id"] }.include? cat["cat_id"]
                     form action="liked/delete" method="POST"
                         input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
@@ -20,11 +25,6 @@ div
                         input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
                         button type="submit"
                             img src="img/unliked.png" alt="unliked_icon" height = 100 width = 100
-            - elsif session[:id] == 0
-                form action="cats/delete" method="POST"
-                    input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
-                    button type="submit"
-                        img src="img/delete.png" alt="delete_icon" height = 100 width = 100
             - else 
                 form action="notlogin" method="GET"
                     button type="submit"
