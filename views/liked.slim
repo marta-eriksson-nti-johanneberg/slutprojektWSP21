@@ -8,7 +8,8 @@ div
             div 
                 - if session[:id] != nil
                     - if @result2.map { |x| x["cat_id"] }.include? cat["cat_id"]
-                        img src="img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
+                        a href="cats/#{cat["cat_id"]}/profile"   
+                            img src="../img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
                         p = cat["name"]
                         p = cat["age"]
                         form action="liked/delete" method="POST"

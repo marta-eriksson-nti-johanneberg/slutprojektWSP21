@@ -6,7 +6,8 @@ div
     h4 här kommer katterna finnas
     - @result.each do |cat| 
         div 
-            img src="img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
+            a href="cats/#{cat["cat_id"]}/profile"   
+                img src="../img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
             p = cat["name"]
             p = cat["age"]
             - if session[:id] == 0 

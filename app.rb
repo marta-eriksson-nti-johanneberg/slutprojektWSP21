@@ -91,6 +91,8 @@ get('/profile') do
   db = SQLite3::Database.new('db/db.db')
   db.results_as_hash = true
   @result = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).first
+  @result2 = db.execute("SELECT * FROM cats")
+  @result3 = db.execute("SELECT * FROM user_cat_relationship WHERE user_id = ?", user_id)
   slim(:profile)
 end
 
@@ -113,6 +115,18 @@ post('/profile/users/logout') do
   redirect('/')
 end
 
+get('/cats/new') do
+  slim(:newcat)
+end
+
+post('/cats/new') do
+  name = params[:name]
+  gender = params[:gender]
+  age = params[:age]
+  size = params[:size] 
+  db = SQLite3::Database.new('db/db.db')
+  db.execute("INSERT INTO cats (name, gender, age, size) VALUES (?,?,?,?)", name, gender, age, size)
+end
 post('/cats/delete') do
   cat_id = params[:cat_id]
   db = SQLite3::Database.new('db/db.db')
@@ -120,6 +134,12 @@ post('/cats/delete') do
   redirect back
 end
 
+get('/cats/:cat_id/profile') do
+  cat_id = params[:cat_id]
+  db = SQLite3::Database.new('db/db.db')
+  @result = db.execute("SELECT * FROM cats WHERE cat_id = ?", cat_id)
+  slim(:catprofile)
+end
 
 post('/todos/delete') do
   id = params[:number]
