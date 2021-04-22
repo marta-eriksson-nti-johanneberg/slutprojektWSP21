@@ -137,6 +137,7 @@ end
 get('/cats/:cat_id/profile') do
   cat_id = params[:cat_id]
   db = SQLite3::Database.new('db/db.db')
+  db.results_as_hash = true
   @result = db.execute("SELECT * FROM cats WHERE cat_id = ?", cat_id)
   slim(:catprofile)
 end
