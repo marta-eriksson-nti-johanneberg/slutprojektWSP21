@@ -1,31 +1,36 @@
-div
-    img src="img/profile_header.png" alt="profile header"
-    img src="img/profile_picture.png" alt="profile picture"
+- if session[:id] != nil
+    div
+        img src="img/profile_header.png" alt="profile header"
+        img src="img/profile_picture.png" alt="profile picture"
 
-div 
-    h1 Uppgifter 
-    h5 Namn 
-    p #{@result["name"]}
-    h5 Mailadress 
-    p #{@result["email"]}
-    h5 Telefonnummer 
-    p #{@result["phone"]}
+    div 
+        h1 Uppgifter 
+        h5 Namn 
+        p #{@result["name"]}
+        h5 Mailadress 
+        p #{@result["email"]}
+        h5 Telefonnummer 
+        p #{@result["phone"]}
+        
+    a href="profile/edit" Redigera uppgifter
 
-div
-    h2 Sparade katter:
-    -  @result2.each do |cat| 
-            div 
-                - if session[:id] != nil
-                    - if @result3.map { |x| x["cat_id"] }.include? cat["cat_id"]
-                        a href="cats/#{cat["cat_id"]}/profile"   
-                            img src="../img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
-                        p = cat["name"]
-                        p = cat["age"]
-                        form action="liked/delete" method="POST"
-                            input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
-                            button type="submit"
-                                img src="img/liked.png" alt="liked_icon" height = 100 width = 100
+    div
+        h2 Sparade katter:
+        -  @result2.each do |cat| 
+                div 
+                    - if session[:id] != nil
+                        - if @result3.map { |x| x["cat_id"] }.include? cat["cat_id"]
+                            a href="cats/#{cat["cat_id"]}/profile"   
+                                img src="../img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
+                            p = cat["name"]
+                            p = cat["age"]
+                            form action="liked/delete" method="POST"
+                                input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
+                                button type="submit"
+                                    img src="img/liked.png" alt="liked_icon" height = 100 width = 100
 
-div 
-    form action="profile/users/logout" method="POST"
-        input type="submit" value="Logga ut"
+    div 
+        form action="profile/users/logout" method="POST"
+            input type="submit" value="Logga ut"
+- else 
+    - redirect('/notlogin')

@@ -98,7 +98,21 @@ end
 
 get('/profile/edit') do
   user_id = session[:id]
+  db = SQLite3::Database.new('db/db.db')
+  db.results_as_hash = true
+  @result = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).first
   slim(:editprofile)
+end
+
+post('/profile/edit') do
+  user_id = session[:id]
+  name = params[:name]
+  email = params[:email]
+  phone = params[:phone]
+  db = SQLite3::Database.new('db/db.db')
+  @result = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).first
+  db.execute("UPDATE users SET name = ?, email = ?, phone = ? WHERE user_id = ?", name, email, phone, user_id)
+  redirect('/profile')
 end
 
 get('/profile/admin') do
@@ -116,6 +130,7 @@ post('/profile/users/logout') do
 end
 
 get('/cats/new') do
+
   slim(:newcat)
 end
 
@@ -170,5 +185,5 @@ end
 #   db.execute("UPDATE todos SET content = ? WHERE id = ?",content,id)
 #   redirect('/todos')
 # end 
-# end
+end
 

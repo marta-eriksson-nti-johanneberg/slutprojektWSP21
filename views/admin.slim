@@ -1,29 +1,32 @@
-div
-    img src="../img/profile_header.png" alt="profile header"
-    img src="../img/profile_picture.png" alt="profile picture"
+- if session[:id] == 0
+    div
+        img src="../img/profile_header.png" alt="profile header"
+        img src="../img/profile_picture.png" alt="profile picture"
 
-div 
-    h1 Uppgifter 
+    div 
+        h1 Uppgifter 
 
-    h5 Mailadress 
-    p #{@result["email"]}
-    h5 Telefonnummer 
-    p #{@result["phone"]}
+        h5 Mailadress 
+        p #{@result["email"]}
+        h5 Telefonnummer 
+        p #{@result["phone"]}
 
-div 
-    a href="/cats/new" Skapa annons 
-    h1 Nuvarande annonser 
-    - @result2.each do |cat| 
-            div 
-                a href="cats/#{cat["cat_id"]}/profile"   
-                    img src="../img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
-                p = cat["name"]
-                p = cat["age"]
-                form action="cats/delete" method="POST"
-                    input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
-                    button type="submit"
-                        img src="../img/delete.png" alt="delete_icon" height = 100 width = 100
+    div 
+        a href="/cats/new" Skapa annons 
+        h1 Nuvarande annonser 
+        - @result2.each do |cat| 
+                div 
+                    a href="cats/#{cat["cat_id"]}/profile"   
+                        img src="../img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
+                    p = cat["name"]
+                    p = cat["age"]
+                    form action="cats/delete" method="POST"
+                        input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
+                        button type="submit"
+                            img src="../img/delete.png" alt="delete_icon" height = 100 width = 100
 
-div 
-    form action="users/logout" method="POST"
-        input type="submit" value="Logga ut"
+    div 
+        form action="users/logout" method="POST"
+            input type="submit" value="Logga ut"
+- else 
+    - redirect('/notlogin')
