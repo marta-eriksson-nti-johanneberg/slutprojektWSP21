@@ -135,38 +135,40 @@ post('/cats/delete') do
 end
 
 get('/cats/:cat_id/profile') do
-  cat_id = params[:cat_id]
+  user_id = session[:id]
+  cat_id = params[:cat_id].to_i
   db = SQLite3::Database.new('db/db.db')
   db.results_as_hash = true
-  @result = db.execute("SELECT * FROM cats WHERE cat_id = ?", cat_id)
-  slim(:catprofile)
+  result = db.execute("SELECT * FROM cats WHERE cat_id = ?", cat_id).first
+  @result2 = db.execute("SELECT * FROM user_cat_relationship WHERE user_id = ?", user_id)
+  slim(:catprofile, locals:{result:result})
 end
 
-post('/todos/delete') do
-  id = params[:number]
-  userid = session[:id].to_i
-  db = SQLite3::Database.new('db/db.db')
-  db.execute("DELETE FROM todos WHERE id = ?", id)
-  redirect('/')
-end
+# post('/todos/delete') do
+#   id = params[:number]
+#   userid = session[:id].to_i
+#   db = SQLite3::Database.new('db/db.db')
+#   db.execute("DELETE FROM todos WHERE id = ?", id)
+#   redirect('/')
+# end
 
-post('/todos/new') do
-  content = params[:content]
-  userid = session[:id].to_i
-  db = SQLite3::Database.new('db/db.db')
-  db.results_as_hash = true
-  db.execute("INSERT INTO todos (content, user_id) VALUES (?,?)",content,userid)
-  redirect('/todos')
-end
+# post('/todos/new') do
+#   content = params[:content]
+#   userid = session[:id].to_i
+#   db = SQLite3::Database.new('db/db.db')
+#   db.results_as_hash = true
+#   db.execute("INSERT INTO todos (content, user_id) VALUES (?,?)",content,userid)
+#   redirect('/todos')
+# end
 
-post('/todos/edit') do
-  content = params[:content]
-  id = params[:number]
-  userid = session[:id].to_i
-  db = SQLite3::Database.new('db/db.db')
-  db.results_as_hash = true
-  db.execute("UPDATE todos SET content = ? WHERE id = ?",content,id)
-  redirect('/todos')
-end 
-end
+# post('/todos/edit') do
+#   content = params[:content]
+#   id = params[:number]
+#   userid = session[:id].to_i
+#   db = SQLite3::Database.new('db/db.db')
+#   db.results_as_hash = true
+#   db.execute("UPDATE todos SET content = ? WHERE id = ?",content,id)
+#   redirect('/todos')
+# end 
+# end
 
