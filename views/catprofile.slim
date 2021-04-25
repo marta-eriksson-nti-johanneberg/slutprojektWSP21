@@ -9,12 +9,12 @@ img src="../../img/cats/cat_#{result["cat_id"]}.jpg" alt="#{result["name"]}_pict
                 img src="../../img/delete.png" alt="delete_icon" height = 100 width = 100
     - elsif session[:id] != nil
         - if @result2.map { |x| x["cat_id"] }.include? result["cat_id"]
-            form action="liked/delete" method="POST"
+            form action="../../liked/delete" method="POST"
                 input type="hidden" name="cat_id" value="#{result["cat_id"]}"
                 button type="submit"
                     img src="../../img/liked.png" alt="liked_icon" height = 100 width = 100
         - else 
-            form action="liked/new" method="POST"
+            form action="../../liked/new" method="POST"
                 input type="hidden" name="cat_id" value="#{result["cat_id"]}"
                 button type="submit"
                     img src="../../img/unliked.png" alt="unliked_icon" height = 100 width = 100
@@ -28,10 +28,12 @@ div
     h1 Uppgifter 
     h5 Namn 
     p #{result["name"]}
+    h5 Ras
+    p #{@result3["breed_name"]}
     h5 Ålder 
     p #{result["age"]}
     h5 Kön 
     p #{result["gender"]}
     h5 Vikt 
-    p #{result["size"]}
+    p #{result["size"]} kg
     

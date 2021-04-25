@@ -16,11 +16,11 @@
         h1 Nuvarande annonser 
         - @result2.each do |cat| 
                 div 
-                    a href="cats/#{cat["cat_id"]}/profile"   
+                    a href="../cats/#{cat["cat_id"]}/profile"   
                         img src="../img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
                     p = cat["name"]
                     p = cat["age"]
-                    form action="cats/delete" method="POST"
+                    form action="../cats/delete" method="POST"
                         input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
                         button type="submit"
                             img src="../img/delete.png" alt="delete_icon" height = 100 width = 100

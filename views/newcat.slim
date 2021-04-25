@@ -1,18 +1,26 @@
 - if session[:id] == 0
     h1 Lägg till ny katt
 
-    form action="cats/new" method="POST"
+    form action="../cats/new" method="POST"
         h5 Namn
         input type="text" name="name" placeholder="Insert lämpligt kattnamn"
+
+        h5 Ras 
+        select name="breed_id"
+            - @breeds.each do |breed|
+                option value="#{breed["breed_id"]}" #{breed["breed_name"]}
+        
         h5 Kön 
         input type="radio" id="male" name="gender" value="male"
         label for="male" Male 
         br
-        input type="radio" id="femle" name="gender" value="female"
+        input type="radio" id="female" name="gender" value="female"
         label for="female" Female 
         br
+
         h5 Ålder
         input type="text" name="age" placeholder="Kattens ålder"
+        
         h5 Vikt 
         input type="text" name="size" placeholder="Kattens vikt"
         br

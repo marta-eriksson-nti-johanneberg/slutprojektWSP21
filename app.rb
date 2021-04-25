@@ -8,11 +8,9 @@ require 'byebug'
 enable :sessions
 
 get('/') do
-  id = session[:id].to_i
-  db = SQLite3::Database.new('db/db.db')
-  db.results_as_hash = true
-  @result = db.execute("SELECT * FROM cats") 
-  @result2 = db.execute("SELECT * FROM user_cat_relationship WHERE user_id = ?", id)
+  user_id = session[:id].to_i
+  @result = get_all_cats() 
+  @result2 = get_all_cats_liked(user_id)
   slim(:"index")
 end
 
@@ -27,13 +25,11 @@ end
 post('/login') do
   username = params[:username]
   password = params[:password]
-  db = SQLite3::Database.new('db/db.db')
-  db.results_as_hash = true
-  result = db.execute("SELECT * FROM users WHERE username = ?", username).first
+  result = get_user_info(username)
   pwdigest = result["pwdigest"]
-  id = result["user_id"]
+  user_id = result["user_id"]
   if BCrypt::Password.new(pwdigest) == password
-    session[:id] = id 
+    session[:id] = user_id 
     redirect('/')
   else 
     "FEL LÖSEN!"
@@ -52,8 +48,7 @@ begin post('/users/new') do
   if (password == password_confirm)
    
     password_digest = BCrypt::Password.create(password)
-    db = SQLite3::Database.new('db/db.db')
-    db.execute("INSERT INTO users (username,user_role,pwdigest) VALUES (?,?,?)",username,"user",password_digest)
+    create_user(username, password_digest)
     redirect('/')
   else
     "Lösenorden matchade inte!"
@@ -63,44 +58,36 @@ end
 
 get('/liked') do
   user_id = session[:id]
-  db = SQLite3::Database.new('db/db.db')
-  db.results_as_hash = true
-  @result = db.execute("SELECT * FROM cats")
-  @result2 = db.execute("SELECT * FROM user_cat_relationship WHERE user_id = ?", user_id)
+  @result = get_all_cats()
+  @result2 = get_all_cats_liked(user_id)
   slim(:liked)
 end
 
 post('/liked/new') do
   user_id = session[:id]
   cat_id = params[:cat_id]
-  db = SQLite3::Database.new('db/db.db')
-  db.execute("INSERT INTO user_cat_relationship (user_id, cat_id) VALUES (?,?)", user_id, cat_id)
+  create_user_cat_relationship(cat_id, user_id)
   redirect back
 end
 
 post('/liked/delete') do
   user_id = session[:id]
   cat_id = params[:cat_id]
-  db = SQLite3::Database.new('db/db.db')
-  db.execute("DELETE FROM user_cat_relationship WHERE cat_id = ? AND user_id = ?", cat_id, user_id)
+  destroy_user_cat_relationship(cat_id, user_id)
   redirect back
 end
 
 get('/profile') do
   user_id = session[:id]
-  db = SQLite3::Database.new('db/db.db')
-  db.results_as_hash = true
-  @result = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).first
-  @result2 = db.execute("SELECT * FROM cats")
-  @result3 = db.execute("SELECT * FROM user_cat_relationship WHERE user_id = ?", user_id)
+  @result = get_user_info2(user_id)
+  @result2 = get_all_cats()
+  @result3 = get_all_cats_liked(user_id)
   slim(:profile)
 end
 
 get('/profile/edit') do
   user_id = session[:id]
-  db = SQLite3::Database.new('db/db.db')
-  db.results_as_hash = true
-  @result = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).first
+    @result = get_user_info2(user_id)
   slim(:editprofile)
 end
 
@@ -109,18 +96,15 @@ post('/profile/edit') do
   name = params[:name]
   email = params[:email]
   phone = params[:phone]
-  db = SQLite3::Database.new('db/db.db')
-  @result = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).first
-  db.execute("UPDATE users SET name = ?, email = ?, phone = ? WHERE user_id = ?", name, email, phone, user_id)
+  @result = get_user_info2(user_id)
+  update_user(name, email, phone, user_id)
   redirect('/profile')
 end
 
 get('/profile/admin') do
   user_id = session[:id]
-  db = SQLite3::Database.new('db/db.db')
-  db.results_as_hash = true
-  @result = db.execute("SELECT * FROM users WHERE user_id = ?", user_id).first
-  @result2 = db.execute("SELECT * FROM cats")
+  @result = get_user_info2(user_id)
+  @result2 = get_all_cats()
   slim(:admin)
 end
 
@@ -130,60 +114,35 @@ post('/profile/users/logout') do
 end
 
 get('/cats/new') do
-
+  @breeds = get_all_breeds()
   slim(:newcat)
 end
 
 post('/cats/new') do
   name = params[:name]
+  breed_id = params[:breed_id]
   gender = params[:gender]
   age = params[:age]
   size = params[:size] 
-  db = SQLite3::Database.new('db/db.db')
-  db.execute("INSERT INTO cats (name, gender, age, size) VALUES (?,?,?,?)", name, gender, age, size)
+  create_cat(name, breed_id, gender, age, size)
+  create_breed_relationship(name, breed_id)
+  redirect('/')
 end
+
 post('/cats/delete') do
   cat_id = params[:cat_id]
-  db = SQLite3::Database.new('db/db.db')
-  db.execute("DELETE FROM cats WHERE cat_id = ?", cat_id)
+  delete_cat(cat_id)
   redirect back
 end
 
 get('/cats/:cat_id/profile') do
   user_id = session[:id]
   cat_id = params[:cat_id].to_i
-  db = SQLite3::Database.new('db/db.db')
-  db.results_as_hash = true
-  result = db.execute("SELECT * FROM cats WHERE cat_id = ?", cat_id).first
-  @result2 = db.execute("SELECT * FROM user_cat_relationship WHERE user_id = ?", user_id)
+  result = get_cat_info(cat_id)
+  @result2 = get_all_cats_liked(user_id)
+  @result3 = get_breed(cat_id)
   slim(:catprofile, locals:{result:result})
 end
 
-# post('/todos/delete') do
-#   id = params[:number]
-#   userid = session[:id].to_i
-#   db = SQLite3::Database.new('db/db.db')
-#   db.execute("DELETE FROM todos WHERE id = ?", id)
-#   redirect('/')
-# end
-
-# post('/todos/new') do
-#   content = params[:content]
-#   userid = session[:id].to_i
-#   db = SQLite3::Database.new('db/db.db')
-#   db.results_as_hash = true
-#   db.execute("INSERT INTO todos (content, user_id) VALUES (?,?)",content,userid)
-#   redirect('/todos')
-# end
-
-# post('/todos/edit') do
-#   content = params[:content]
-#   id = params[:number]
-#   userid = session[:id].to_i
-#   db = SQLite3::Database.new('db/db.db')
-#   db.results_as_hash = true
-#   db.execute("UPDATE todos SET content = ? WHERE id = ?",content,id)
-#   redirect('/todos')
-# end 
 end
 
