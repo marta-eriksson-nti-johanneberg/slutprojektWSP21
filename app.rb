@@ -7,6 +7,8 @@ require 'byebug'
 
 enable :sessions
 
+include Model
+
 get('/') do
   user_id = session[:id].to_i
   @result = get_all_cats() 
