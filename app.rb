@@ -3,11 +3,19 @@ require 'slim'
 require 'sqlite3'
 require 'bcrypt'
 require_relative 'model.rb'
-require 'byebug'
+require 'byebug' 
+require 'spec'
 
 enable :sessions
 
 include Model
+
+before do
+  if  (request.path_info != '/') && (session[:id] == nil)
+    redirect('/error')
+  end
+ end
+ 
 
 # Display Landing Page
 #
@@ -123,10 +131,14 @@ end
 # @see Model#get_all_cats_likes
 get('/profile') do
   user_id = session[:id]
-  @result = get_user_info2(user_id)
-  @result2 = get_all_cats()
-  @result3 = get_all_cats_liked(user_id)
-  slim(:profile)
+  if user_id != nil
+    @result = get_user_info2(user_id)
+    @result2 = get_all_cats()
+    @result3 = get_all_cats_liked(user_id)
+    slim(:profile)
+  else
+    slim(:error)
+  end
 end
 
 # Displays page with form for user profile update
