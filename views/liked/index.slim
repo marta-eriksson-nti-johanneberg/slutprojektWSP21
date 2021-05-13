@@ -1,0 +1,14 @@
+h1 Favoriter 
+div 
+    - @result.each do |cat| 
+            div 
+                - if @result2.map { |x| x["cat_id"] }.include? cat["cat_id"]
+                    a href="../cats/#{cat["cat_id"]}"   
+                        img src="../../img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
+                    p = cat["name"]
+                    p = cat["age"]
+                    form action="liked/delete" method="POST"
+                        input type="hidden" name="cat_id" value="#{cat["cat_id"]}"
+                        button type="submit"
+                            img src="../img/liked.png" alt="liked_icon" height = 100 width = 100
+                

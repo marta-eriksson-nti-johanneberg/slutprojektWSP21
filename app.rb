@@ -11,11 +11,16 @@ enable :sessions
 include Model
 
 before do
-  if  (request.path_info != '/') && (session[:id] == nil)
+  if  (request.path_info != '/')  && (request.path_info != '/error') && (request.path_info != '/users/showlogin') && (request.path_info != '/users/login') && (request.path_info != '/users/new') && (!request.path_info.match(/^\/cats\/\d/)) && (session[:id] == nil)
     redirect('/error')
   end
- end
- 
+end
+
+before do
+  if ((request.path_info == '/users/admin/profile') || (request.path_info == '/cats/new') || (request.path_info == '/cats/delete')) && (session[:id] != 0)
+    redirect('/error')
+  end
+end
 
 # Display Landing Page
 #
@@ -30,14 +35,15 @@ end
 
 # Page displayed if non-logged in user attempts to use functions for logged in users only
 #
-get('/notlogin') do
-  slim(:"notlogin")
+get('/error') do
+  slim(:"error")
 end
+
 
 # Displays a login form
 #
-get('/showlogin') do
-  slim(:login)
+get('/users/showlogin') do
+  slim(:"users/login")
 end
 
 # Logs in user by updating sessions id if login-information matches database and redirects to Landing Page
@@ -46,7 +52,7 @@ end
 # @param [Password] password, The entered password
 # 
 # @see Model#get_user_info
-post('/login') do
+post('/users/login') do
   username = params[:username]
   password = params[:password]
   result = get_user_info(username)
@@ -62,8 +68,8 @@ end
 
 # Displays a register form
 #
-get('/register') do
-  slim(:register)
+get('/users/new') do
+  slim(:"users/new")
 end
 
 # Registers new user if password & password_confirm match and redirects to Landing Page
@@ -97,7 +103,7 @@ get('/liked') do
   user_id = session[:id]
   @result = get_all_cats()
   @result2 = get_all_cats_liked(user_id)
-  slim(:liked)
+  slim(:"liked/index")
 end
 
 # Creates a new user-cat relation and redirects to previous page
@@ -129,13 +135,13 @@ end
 # @see Model#get_user_info2
 # @see Model#get_all_cats
 # @see Model#get_all_cats_likes
-get('/profile') do
+get('/users/profile') do
   user_id = session[:id]
   if user_id != nil
     @result = get_user_info2(user_id)
     @result2 = get_all_cats()
     @result3 = get_all_cats_liked(user_id)
-    slim(:profile)
+    slim(:"/users/profile")
   else
     slim(:error)
   end
@@ -144,10 +150,10 @@ end
 # Displays page with form for user profile update
 #
 #@see Model#get_user_info2
-get('/profile/edit') do
+get('/users/edit') do
   user_id = session[:id]
     @result = get_user_info2(user_id)
-  slim(:editprofile)
+  slim(:"users/edit")
 end
 
 # Updates user profile and redirects to '/profile'
@@ -158,30 +164,30 @@ end
 # 
 # @see Model#get_user_info2
 # @see Model#update_user
-post('/profile/edit') do
+post('/users/edit') do
   user_id = session[:id]
   name = params[:name]
   email = params[:email]
   phone = params[:phone]
   @result = get_user_info2(user_id)
   update_user(name, email, phone, user_id)
-  redirect('/profile')
+  redirect('/users/profile')
 end
 
 # Displays admin profile
 #
 # @see Model#get_user_info2
 # @see Model#get_all_cats
-get('/profile/admin') do
+get('/users/admin/profile') do
   user_id = session[:id]
   @result = get_user_info2(user_id)
   @result2 = get_all_cats()
-  slim(:admin)
+  slim(:"users/admin/profile")
 end
 
 # Logs out user by reseting session id and redirects to Landing Page
 #
-post('/profile/users/logout') do
+post('/users/logout') do
   session[:id] = nil 
   redirect('/')
 end
@@ -191,7 +197,7 @@ end
 #@see Model#get_all_breeds
 get('/cats/new') do
   @breeds = get_all_breeds()
-  slim(:newcat)
+  slim(:"cats/new")
 end
 
 # Creates a new cat and redirects to Landing Page
@@ -233,13 +239,13 @@ end
 # @see Model#get_cat_info
 # @see Model#get_all_cats_liked
 # @see Model#get_breed
-get('/cats/:cat_id/profile') do
+get('/cats/:cat_id') do
   user_id = session[:id]
   cat_id = params[:cat_id].to_i
   result = get_cat_info(cat_id)
   @result2 = get_all_cats_liked(user_id)
   @result3 = get_breed(cat_id)
-  slim(:catprofile, locals:{result:result})
+  slim(:"cats/show", locals:{result:result})
 end
 
 end

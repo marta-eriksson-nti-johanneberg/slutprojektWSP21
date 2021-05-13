@@ -10,13 +10,13 @@ html lang="en"
       a href="/" home
       a href="/liked" Favorites
       - if session[:id] == nil
-        a href="/showlogin" Login
+        a href="/users/showlogin" Login
       - elsif session[:id] == 0
-        a href="/profile/admin"
+        a href="/users/admin/profile"
           img src="../../img/profile_picture.png" 
       - else
-        a href="/profile"
-          img src="../../img/profile_picture.png" 
+        a href="/users/profile"
+          img src="../img/profile_picture.png" 
     h1 Catsite!
 
     == yield

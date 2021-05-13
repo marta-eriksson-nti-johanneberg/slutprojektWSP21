@@ -6,7 +6,7 @@ div
     h4 här kommer katterna finnas
     - @result.each do |cat| 
         div 
-            a href="../cats/#{cat["cat_id"]}/profile"   
+            a href="../cats/#{cat["cat_id"]}"   
                 img src="../img/cats/cat_#{cat["cat_id"]}.jpg" alt="#{cat["name"]}_picture" height= 300 width = 300
             p = cat["name"]
             p = cat["age"]
@@ -27,7 +27,7 @@ div
                         button type="submit"
                             img src="img/unliked.png" alt="unliked_icon" height = 100 width = 100
             - else 
-                form action="notlogin" method="GET"
+                form action="error" method="GET"
                     button type="submit"
                         img src="img/unliked.png" alt="unliked_icon" height = 100 width = 100               
 

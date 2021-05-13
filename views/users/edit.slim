@@ -1,0 +1,18 @@
+div
+    img src="../img/profile_header.png" alt="profile header"
+    img src="../img/profile_picture.png" alt="profile picture"
+
+h1 Redigera uppgifter
+
+form action="../users/edit" method="POST"
+    h5 Namn
+    input type="text" name="name" value="#{@result["name"]}"
+    h5 Mailadress
+    input type="text" name="email" value="#{@result["email"]}"
+    h5 Telefonnummer
+    input type="text" name="phone" value="#{@result["phone"]}"
+    br
+    br
+    input type="submit" value="Uppdatera"
+
+
