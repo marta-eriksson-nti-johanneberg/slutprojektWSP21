@@ -84,6 +84,25 @@ begin post('/users/new') do
   password = params[:password]
   password_confirm = params[:password_confirm]
 
+
+  characters = validate_username1(username)
+  if characters != true
+    session[:error_msg1] = "Ditt användarnamn innehåller otillåtna tecken, var vänlig håll dig till bokstäver, siffror och _"
+    redirect('/users/new')
+  else
+    session[:error_msg1] = ""
+  end
+
+
+  characters_number = validate_username2(username)
+
+  if characters_number != true
+    session[:error_msg2] = "Endast användarnamn mellan 4 - 20 tecken tillåtna"
+    redirect('/users/new')
+  else
+    session[:error_msg2] = ""
+  end
+
   if (password == password_confirm)
    
     password_digest = BCrypt::Password.create(password)

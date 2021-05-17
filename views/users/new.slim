@@ -3,3 +3,7 @@ form action="/users/new" method="POST"
     input type="password" name="password" placeholder="Enter password"
     input type="password" name="password_confirm" placeholder="Enter password again"
     input type="submit" value="registrera ny användare"
+
+p #{session[:error_msg1]}
+br
+p #{session[:error_msg2]}
