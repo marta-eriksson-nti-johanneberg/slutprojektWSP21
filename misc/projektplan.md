@@ -28,5 +28,5 @@ hej
 ![diagram](er_diagram.png)
 
 ## 4. Arkitektur (Beskriv filer och mappar - vad gör/innehåller de?).
-
-
+![arkitektur1](arkitekturdokumentering_1.png)
+![arkitektur2](arkitekturdokumentering_2.png)
