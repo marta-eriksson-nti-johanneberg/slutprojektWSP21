@@ -110,7 +110,7 @@ module Model
     #Om personen har loginförsök kvar returneras true
     def login_attempts(attempts)
         result = nil
-        attempts_left = 3 - attempts
+        attempts_left = 4 - attempts.to_i
         if attempts_left <= 0
             result = false
         else

@@ -30,4 +30,3 @@ hej
 ## 4. Arkitektur (Beskriv filer och mappar - vad gör/innehåller de?).
 
 
-
