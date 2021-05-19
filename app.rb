@@ -10,6 +10,8 @@ enable :sessions
 
 include Model
 
+login_attempts = 0
+
 before do
   if  (request.path_info != '/')  && (request.path_info != '/error') && (request.path_info != '/users/showlogin') && (request.path_info != '/users/login') && (request.path_info != '/users/new') && (!request.path_info.match(/^\/cats\/\d/)) && (session[:id] == nil)
     redirect('/error')
@@ -56,13 +58,42 @@ post('/users/login') do
   username = params[:username]
   password = params[:password]
   result = get_user_info(username)
-  pwdigest = result["pwdigest"]
-  user_id = result["user_id"]
-  if BCrypt::Password.new(pwdigest) == password
-    session[:id] = user_id 
-    redirect('/')
+  session[:login_error] = ""
+  if result == nil
+    login_attempts = login_attempts + 1
+    session[:login_error] = "Felaktigt användarnamn eller lösenord"
+    redirect('/users/showlogin')
+  else
+    pwdigest = result["pwdigest"]
+    user_id = result["user_id"]
+  end
+  if login_attempts(login_attempts) == true
+    if BCrypt::Password.new(pwdigest) == password
+      session[:id] = user_id 
+      login_attempts = 0
+      redirect('/')
+    else 
+      session[:login_error] = "Fel lösenord dummis"
+      login_attempts = login_attempts + 1
+      login_time = Time.now
+      redirect('/users/showlogin')
+    end
   else 
-    "FEL LÖSEN!"
+    if cooldown_checker(login_time, Time.now) == false
+      if BCrypt::Password.new(pwdigest) == password
+        session[:id] = user_id 
+        login_attempts = 0
+        redirect('/')
+      else 
+        session[:login_error] = "Fel lösenord dummis"
+        login_time = Time.now
+        login_attempts = login_attempts + 1
+        redirect('/users/showlogin')
+      end
+    else 
+      session[:login_error] = "Chilla du e för znabb, vänta 15s till nästa loginförsök"
+      redirect('/users/showlogin')
+    end
   end
 end
 
@@ -268,4 +299,3 @@ get('/cats/:cat_id') do
 end
 
 end
-

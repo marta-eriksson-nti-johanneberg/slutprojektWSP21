@@ -95,6 +95,30 @@ module Model
         return result
     end
 
+    #Om det gått mindre än 15s sedan senaste failade loginförsök returneras true
+    def cooldown_checker(previoustime,time)
+        result = nil
+        time_check = previoustime.to_i - time.to_i
+        if time_check <= 15
+            result = true
+        else
+            result = false
+        end
+        return result
+    end
+
+    #Om personen har loginförsök kvar returneras true
+    def login_attempts(attempts)
+        result = nil
+        attempts_left = 3 - attempts
+        if attempts_left <= 0
+            result = false
+        else
+            result = true
+        end
+        return result
+    end
+
     def validate_username1(username)
         if username =~ /[a-zA-Z0-9._]/
             characters = true
@@ -112,4 +136,6 @@ module Model
         end
         return characters_number
     end
+
+
 end
